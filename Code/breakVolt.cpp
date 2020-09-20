@@ -37,6 +37,18 @@ vector< vector<double> > getData(string file, char delim, int start) {
   return data;
 }
 
+double pythagoreanTheorem(vector<double> numbers) {
+  vector<double> num = numbers;
+
+  double sum = 0;
+  for(int i = 0; i < num.size(), i++) {
+    sum += pow(num[i], 2);
+  }
+  sum = pow(sum, 0.5);
+
+  return sum;
+}
+
 void breakVolt() {
   string fileName = "../Data/Vbr.csv";
   string fileName = "C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Data/Vbr.csv";
@@ -70,8 +82,11 @@ void breakVolt() {
   double Vbr = -b/m;
   double Vp = Vbr - 3;
 
-  cout<<"V_br = "<<Vbr<<endl;
-  cout<<"V_p = "<<Vp<<endl;
+  double sig_Vbr = pow((pow((sigb/m),2) + pow((b*sigm/m/m),2)),0.5);
+  double sig_Vp = sig_Vbr;
+
+  cout<<"V_br = "<<Vbr<<" +/- "<<sig_Vbr<<" V"<<endl;
+  cout<<"V_p = "<<Vp<<" +/- "<<sig_Vp<<" V"<<endl;
 
   f->SetLineWidth(1);
   gr->SetLineWidth(0);
