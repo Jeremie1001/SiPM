@@ -1,22 +1,21 @@
 // @(#)root
 
-//#include <cstdio>
 #include <iostream>
-//#include <iomanip>
-//#include <fstream>
+#include <fstream>
+#include <sstream>
 #include <string>
-//#include <sstream>
-//#include "TFile.h"
 #include <vector>
-#include <math.h>
+#include <stdlib>
+#include <TFile.h>
 
 using namespace std;
 
 vector< vector<double> > getData(string file, char delim) {
   string fileName = file;
   char delimiter = delim;
+  cout<<fileName<<endl;
+  ifstream ifs(fileName.c_str());
 
-  ifstream ifs(fileName);
 
   vector< vector<double> > data;
   vector<double> row;
@@ -30,7 +29,7 @@ vector< vector<double> > getData(string file, char delim) {
     row.clear();
     stringstream ss(line);
     while(getline(ss, entry, delimiter)){
-      row.push_back(stod(entry));
+      row.push_back( strtod(entry.c_str(), NULL) );
     }
     data.push_back(row);
   }
@@ -39,24 +38,16 @@ vector< vector<double> > getData(string file, char delim) {
 
 void gainFit() {
   string fileName = "../Data/100att_gain32.csv";
+  string fileName = "C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Data/100att_gain32.csv";
+
   vector< vector<double> > data = getData(fileName, ',');
 
   TCanvas *c1 = new TCanvas();
 
-/*
-  TH1D *hist;
-  hist = new TH1D("h1","histogram 1",data.size(),data.front()[0],data.back()[0]);
+  unsigned int const size = data.size();
 
-  for(int i = 0; i < data.size(); i++) {
-    hist->SetBinContent(i, data[i][1]);
-    cout<<"Setting bin "<<i<<" as: "<<hist->GetBinContent(i)<<endl;
-  }
-  hist->Draw();
-*/
-///*
-
-  Double_t x[data.size()];
-  Double_t y[data.size()];
+  Double_t x[size];
+  Double_t y[size];
 
   for(int i = 0; i < data.size(); i++) {
     x[i] = data[i][0];
@@ -72,5 +63,4 @@ void gainFit() {
   gr->GetXaxis()->SetTitle("Detected");
   gr->GetYaxis()->SetTitle("Channel");
   gr->Draw("ACP");
-//*/
 }
