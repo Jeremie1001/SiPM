@@ -96,4 +96,6 @@ void breakVolt() {
   gr->GetXaxis()->SetTitle("Voltage (V)");
   gr->GetYaxis()->SetTitle("Current (mA?)");
   gr->Draw("AP");
+
+  c1->SaveAs("C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Report/Figures/breakVolt.png");
 }

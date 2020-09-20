@@ -63,4 +63,6 @@ void gainFit() {
   gr->GetXaxis()->SetTitle("Detected");
   gr->GetYaxis()->SetTitle("Channel");
   gr->Draw("ACP");
+
+  c1->SaveAs("C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit.png");
 }
