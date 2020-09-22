@@ -1,12 +1,11 @@
 // @(#)root
 
-#include <stdlib>
+#include <cstdlib>
 #include <TFile.h>
 #include "SiPM.h"
 
 void gainFit() {
-  string fileName = "../Data/100att_gain32.csv";
-  string fileName = "C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Data/100att_gain32.csv";
+  string fileName = "/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Data/100att_gain32.csv";
 
   vector< vector<double> > data = getData(fileName, ',', 0);
 
@@ -32,5 +31,5 @@ void gainFit() {
   gr->GetYaxis()->SetTitle("Channel");
   gr->Draw("AP");
 
-  c1->SaveAs("C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit.png");
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit.png");
 }

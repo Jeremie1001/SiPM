@@ -1,12 +1,12 @@
 // @(#)root
 
-#include <stdlib>
+#include <cstdlib>
 #include <TFile.h>
 #include "SiPM.h"
 
 void breakVolt() {
-  string fileName = "../Data/Vbr.csv";
-  string fileName = "C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Data/Vbr.csv";
+//  string fileName = "../Data/Vbr.csv";
+  string fileName = "/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Data/Vbr.csv";
 
   vector< vector<double> > data = getData(fileName, ',', 3);
 
@@ -52,5 +52,5 @@ void breakVolt() {
   gr->GetYaxis()->SetTitle("Current (mA?)");
   gr->Draw("AP");
 
-  c1->SaveAs("C:/Users/jerem/Documents/School/Uni/Courses/4th_Year/PHYS4007/SiPM/Report/Figures/breakVolt.png");
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/breakVolt.png");
 }

@@ -39,16 +39,4 @@ vector< vector<double> > getData(string file, char delim, int start) {
   return data;
 }
 
-double pythagoreanTheorem(vector<double> numbers) {
-  vector<double> num = numbers;
-
-  double sum = 0;
-  for(int i = 0; i < num.size(), i++) {
-    sum += pow(num[i], 2);
-  }
-  sum = pow(sum, 0.5);
-
-  return sum;
-}
-
 #endif

@@ -3,4 +3,5 @@
 *.log
 *.aux
 *.toc
+*.h.gch
 Data/data.zip
