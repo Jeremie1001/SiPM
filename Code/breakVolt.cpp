@@ -35,7 +35,7 @@ void breakVolt() {
   double sigm = f->GetParError(1);
 
   double Vbr = -b/m;
-  double Vp = Vbr - 3;
+  double Vp = Vbr + 3;
 
   double sig_Vbr = pow((pow((sigb/m),2) + pow((b*sigm/m/m),2)),0.5);
   double sig_Vp = sig_Vbr;
@@ -49,7 +49,7 @@ void breakVolt() {
   gr->SetMarkerSize(0.5);
   gr->SetTitle("Breaking Voltage Plot");
   gr->GetXaxis()->SetTitle("Voltage (V)");
-  gr->GetYaxis()->SetTitle("Current (mA?)");
+  gr->GetYaxis()->SetTitle("Current (mA)");
   gr->Draw("AP");
 
   c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/breakVolt.png");
