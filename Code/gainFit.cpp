@@ -9,7 +9,7 @@ void fitter(TF1 *f, int start, int end) {
 }
 
 void gainFit() {
-  string fileName = "/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Data/100att_gain32.csv";
+  string fileName = "/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Data/dataset1/100att_gain32.csv";
 
   vector< vector<double> > data = getData(fileName, ',', 0);
 
