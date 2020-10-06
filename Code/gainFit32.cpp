@@ -4,7 +4,7 @@
 #include <TFile.h>
 #include "SiPM.h"
 
-void gainFit() {
+void gainFit32() {
 
   //------------------------------------Retrieve data from CSV files------------------------------------//
 
@@ -28,6 +28,9 @@ void gainFit() {
     y[i] = data[i][1];
   }
 
+  TGraph* channelCountsTGraph;
+  channelCountsTGraph = new TGraph(data.size(),x,y);
+
   //----------------------------------------------------------------------------------------------------//
 
 
@@ -38,12 +41,9 @@ void gainFit() {
   int gaussFitNum = sizeof(gaussLimits)/sizeof(gaussLimits[0]);
   double gaussResults[11][3][2];
 
-  TGraph* gr;
-  gr = new TGraph(data.size(),x,y);
-
   for(int i = 0; i < gaussFitNum; i++) {
     TF1 *g1 = new TF1("m1","gaus",x[gaussLimits[i][0]],x[gaussLimits[i][1]]);
-    gr->Fit("m1","QR+");
+    channelCountsTGraph->Fit("m1","QR+");
     for (int j = 0; j < 3; j++) {
       gaussResults[i][j][0] = g1->GetParameter(j);
       gaussResults[i][j][1] = g1->GetParError(j);
@@ -83,8 +83,8 @@ void gainFit() {
     y2[i] = conversion*(gaussResults[i+1][1][0]-gaussResults[i][1][0])/electron;
   }
 
-  TGraph* gr2;
-  gr2 = new TGraph((size2),x2,y2);
+  TGraph* gainLinearTGraph;
+  gainLinearTGraph = new TGraph((size2),x2,y2);
 
   //----------------------------------------------------------------------------------------------------//
 
@@ -92,8 +92,8 @@ void gainFit() {
 
   //----------------------------Fit linear function to Gain v. Channel plot-----------------------------//
 
-  gr2->Fit("pol1", "Q");
-  TF1 *f = gr2->GetFunction("pol1");
+  gainLinearTGraph->Fit("pol1", "Q");
+  TF1 *f = gainLinearTGraph->GetFunction("pol1");
 
   double b = f->GetParameter(0);
   double m = f->GetParameter(1);
@@ -101,33 +101,46 @@ void gainFit() {
   double sigb = f->GetParError(0);
   double sigm = f->GetParError(1);
 
-  cout<<"Correlation factor of gain v channel: "<<gr2->GetCorrelationFactor()<<endl;
+  cout<<"Correlation factor of gain v channel: "<<gainLinearTGraph->GetCorrelationFactor()<<endl;
 
   //----------------------------------------------------------------------------------------------------//
 
 
 
+  //----------------------------------------Gaussian peaks plot-----------------------------------------//
+
+/*
+  TH2D *hXY;
+  hXY = new TH2D("h1", "Histogram for joint datasets", 50, minX, maxX, 50, minY, maxY);
+
+  for(int j = 0; j < dataArray[0].size(); j++) {
+    hXY->Fill(dataArray[0][j], dataArray[1][j]);
+  }
+*/
+
+  //----------------------------------------------------------------------------------------------------//
+
   //-------------------------------Draw plots to canvas and save to files-------------------------------//
 
   TCanvas *c1 = new TCanvas();
 
-  gr->SetLineWidth(0);
-  gr->SetMarkerStyle(20);
-  gr->SetMarkerSize(0.5);
-  gr->SetTitle("Gain Plot");
-  gr->GetXaxis()->SetTitle("Channel");
-  gr->GetYaxis()->SetTitle("Counts");
-  gr->Draw("AP");
+  channelCountsTGraph->SetLineWidth(0);
+  channelCountsTGraph->SetMarkerStyle(20);
+  channelCountsTGraph->SetMarkerSize(0.5);
+  channelCountsTGraph->SetTitle("Gain Plot");
+  channelCountsTGraph->GetXaxis()->SetTitle("Channel");
+  channelCountsTGraph->GetYaxis()->SetTitle("Counts");
+  channelCountsTGraph->Draw("AP");
 
   c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit.png");
 
-  gr2->SetLineWidth(0);
-  gr2->SetMarkerStyle(20);
-  gr2->SetMarkerSize(0.5);
-  gr2->SetTitle("Gain Plot");
-  gr2->GetXaxis()->SetTitle("Channel");
-  gr2->GetYaxis()->SetTitle("Gain");
-  gr2->Draw("AP");
+  gainLinearTGraph->SetLineWidth(0);
+  gainLinearTGraph->SetMarkerStyle(20);
+  gainLinearTGraph->SetMarkerSize(0.5);
+  gainLinearTGraph->SetTitle("Gain Plot");
+  gainLinearTGraph->GetXaxis()->SetTitle("Channel");
+  gainLinearTGraph->GetYaxis()->SetTitle("Gain");
+  gainLinearTGraph->Draw("AP");
 
   //----------------------------------------------------------------------------------------------------//
 
