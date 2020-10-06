@@ -2,6 +2,7 @@
 #define sipm_h
 
 #include <iostream>
+#include <math.h>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -10,7 +11,7 @@
 using namespace std;
 
 vector< vector<double> > getData(string file, char delim, int start);
-double pythagoreanTheorem(vector<double> numbers);
+double EE(int exponentPassed);
 
 vector< vector<double> > getData(string file, char delim, int start) {
   string fileName = file;
@@ -37,6 +38,11 @@ vector< vector<double> > getData(string file, char delim, int start) {
     }
   }
   return data;
+}
+
+double EE(int exponentPassed) {
+  int exponent = exponentPassed;
+  return pow(10,exponent);
 }
 
 #endif
