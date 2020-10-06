@@ -5,12 +5,18 @@
 #include "SiPM.h"
 
 void breakVolt() {
-//  string fileName = "../Data/Vbr.csv";
+
+  //------------------------------------Retrieve data from CSV files------------------------------------//
+
   string fileName = "/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Data/dataset1/Vbr.csv";
 
   vector< vector<double> > data = getData(fileName, ',', 3);
 
-  TCanvas *c1 = new TCanvas();
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //------------------------Create Voltage v. Current plot for breaking voltage-------------------------//
 
   unsigned int const size = data.size();
 
@@ -21,6 +27,12 @@ void breakVolt() {
     x[i] = data[i][0];
     y[i] = data[i][1];
   }
+
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //---------------------------Fit linear function to Voltage v. Current plot---------------------------//
 
   TGraph* gr;
   gr = new TGraph(data.size(),x,y);
@@ -34,6 +46,12 @@ void breakVolt() {
   double sigb = f->GetParError(0);
   double sigm = f->GetParError(1);
 
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //---------------------------------Analyse data and output to console---------------------------------//
+
   double Vbr = -b/m;
   double Vp = Vbr + 3;
 
@@ -42,6 +60,14 @@ void breakVolt() {
 
   cout<<"V_br = "<<Vbr<<" +/- "<<sig_Vbr<<" V"<<endl;
   cout<<"V_p = "<<Vp<<" +/- "<<sig_Vp<<" V"<<endl;
+
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //-------------------------------Draw plots to canvas and save to files-------------------------------//
+
+  TCanvas *c1 = new TCanvas();
 
   f->SetLineWidth(1);
   gr->SetLineWidth(0);
@@ -53,4 +79,6 @@ void breakVolt() {
   gr->Draw("AP");
 
   c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/breakVolt.png");
+
+  //----------------------------------------------------------------------------------------------------//
 }

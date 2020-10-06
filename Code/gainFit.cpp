@@ -5,11 +5,18 @@
 #include "SiPM.h"
 
 void gainFit() {
+
+  //------------------------------------Retrieve data from CSV files------------------------------------//
+
   string fileName = "/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Data/dataset1/100att_gain32.csv";
 
   vector< vector<double> > data = getData(fileName, ',', 0);
 
-  TCanvas *c1 = new TCanvas();
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //--------------------------Create Channel v. Counts plot for gaussian peaks---------------------------//
 
   unsigned int const size = data.size();
 
@@ -21,6 +28,12 @@ void gainFit() {
     y[i] = data[i][1];
   }
 
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //----Add gauss fit to each peak w/ ranges defined in limits array & push params to results array-----//
+
   int gaussLimits[11][2] = {{22,68},{76,123},{124,178},{180,230},{238,284},{295,339},{346,394},{402,451},{456,508},{514,564},{567,621}};
   int gaussFitNum = sizeof(gaussLimits)/sizeof(gaussLimits[0]);
   double gaussResults[11][3][2];
@@ -31,7 +44,6 @@ void gainFit() {
   for(int i = 0; i < gaussFitNum; i++) {
     TF1 *g1 = new TF1("m1","gaus",x[gaussLimits[i][0]],x[gaussLimits[i][1]]);
     gr->Fit("m1","QR+");
-    //cout<<i<<":"<<endl;
     for (int j = 0; j < 3; j++) {
       gaussResults[i][j][0] = g1->GetParameter(j);
       gaussResults[i][j][1] = g1->GetParError(j);
@@ -44,17 +56,22 @@ void gainFit() {
       } else if (j == 2) {
         paramName = "Sigma";
       }
-
-      //cout<<paramName<<": "<<gaussResults[i][j][0]<<" +/- "<<gaussResults[i][j][1]<<endl;
     }
-    //cout<<endl;
     g1->SetLineWidth(1);
   }
+
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //------------------Get gain for each set of adjacent peaks and plot against channel------------------//
 
   double conversion = 1.027*EE(-15);
   double electron = 1.602*EE(-19);
   double avgMeanDiff = (gaussResults[(gaussFitNum-1)][1][0]-gaussResults[0][1][0])/(gaussFitNum-1);
   double gain = conversion*avgMeanDiff/electron;
+
+  cout<<"Gain = "<<gain<<endl;
 
   unsigned int const size2 = gaussFitNum-3;
 
@@ -64,11 +81,16 @@ void gainFit() {
   for(int i = 0; i < size2; i++) {
     x2[i] = (gaussResults[i+1][1][0]+gaussResults[i][1][0])/2;
     y2[i] = conversion*(gaussResults[i+1][1][0]-gaussResults[i][1][0])/electron;
-    cout<<to_string(i)<<": "<<x2[i]<<"; "<<y2[i]<<endl;
   }
 
   TGraph* gr2;
   gr2 = new TGraph((size2),x2,y2);
+
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //----------------------------Fit linear function to Gain v. Channel plot-----------------------------//
 
   gr2->Fit("pol1", "Q");
   TF1 *f = gr2->GetFunction("pol1");
@@ -81,9 +103,13 @@ void gainFit() {
 
   cout<<"Correlation factor of gain v channel: "<<gr2->GetCorrelationFactor()<<endl;
 
+  //----------------------------------------------------------------------------------------------------//
 
-  cout<<"Gain = "<<gain<<endl;
 
+
+  //-------------------------------Draw plots to canvas and save to files-------------------------------//
+
+  TCanvas *c1 = new TCanvas();
 
   gr->SetLineWidth(0);
   gr->SetMarkerStyle(20);
@@ -102,5 +128,7 @@ void gainFit() {
   gr2->GetXaxis()->SetTitle("Channel");
   gr2->GetYaxis()->SetTitle("Gain");
   gr2->Draw("AP");
+
+  //----------------------------------------------------------------------------------------------------//
 
 }

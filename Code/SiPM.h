@@ -10,39 +10,80 @@
 
 using namespace std;
 
+//---------------------------------Initial declaaration of functions----------------------------------//
+
 vector< vector<double> > getData(string file, char delim, int start);
 double EE(int exponentPassed);
 
+//----------------------------------------------------------------------------------------------------//
+
+
+
+//--------------------------------------Data retireval function---------------------------------------//
+
 vector< vector<double> > getData(string file, char delim, int start) {
+
+  //-------------------------------Push function parameters to variables--------------------------------//
+
   string fileName = file;
   char delimiter = delim;
   int startLine = start;
 
+  //----------------------------------------------------------------------------------------------------//
+
+
+
+  //------------------------------Open stream of file with given filename-------------------------------//
+
   ifstream ifs(fileName.c_str());
 
-  vector< vector<double> > data;
-  vector<double> row;
-  string line;
-  string entry;
+  //----------------------------------------------------------------------------------------------------//
 
-  int linecount = 0;
-  while( getline(ifs, line) ) {
-    linecount ++;
+
+
+  //--------------------------------------Variable initialization---------------------------------------//
+
+  vector< vector<double> > dataSet;     //Vector for full dataset, each element is a vector of elements seperated by given delimiter
+  vector<double> row;                   //Each row of dataset, elements are all values that were seperated by given delimiter
+  string lineString;                    //String that each row is pushed to before being seperated bby given delimiter
+  string elementString;                 //String that each element of a given line is pushed to before being added to row vector
+  int lineCount = 0;                    //Integer to keep track of position in file, used to skip header rows if necessary
+
+  while( getline(ifs, lineString) ) {
+
+    //Increase lineCount variable
+    lineCount ++;
+
+    //Clear row vector for new row
     row.clear();
-    stringstream ss(line);
-    while(getline(ss, entry, delimiter)){
-      row.push_back( strtod(entry.c_str(), NULL) );
+
+    //Add current line to lineString variable
+    stringstream ss(lineString);
+
+    //Split lineString into elements one by one, convert to double and add each to row vector
+    while(getline(ss, elementString, delimiter)){
+      row.push_back( strtod(elementString.c_str(), NULL) );
     }
-    if (linecount >= startLine) {
-      data.push_back(row);
+
+    //Add row vector to dataSet vector, skip header rows if necessary
+    if (lineCount >= startLine) {
+      dataSet.push_back(row);
     }
   }
-  return data;
+  return dataSet;
 }
+
+//----------------------------------------------------------------------------------------------------//
+
+
+
+//-----------------Scientific notation function, for simplifying nomenclature in code-----------------//
 
 double EE(int exponentPassed) {
   int exponent = exponentPassed;
   return pow(10,exponent);
 }
+
+//----------------------------------------------------------------------------------------------------//
 
 #endif
