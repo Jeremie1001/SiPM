@@ -4,10 +4,6 @@
 #include <TFile.h>
 #include "SiPM.h"
 
-void fitter(TF1 *f, int start, int end) {
-
-}
-
 void gainFit() {
   string fileName = "/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Data/dataset1/100att_gain32.csv";
 
@@ -32,12 +28,10 @@ void gainFit() {
   TGraph* gr;
   gr = new TGraph(data.size(),x,y);
 
-  //TF1 *g1;
-
   for(int i = 0; i < gaussFitNum; i++) {
     TF1 *g1 = new TF1("m1","gaus",x[gaussLimits[i][0]],x[gaussLimits[i][1]]);
     gr->Fit("m1","QR+");
-    cout<<i<<":"<<endl;
+    //cout<<i<<":"<<endl;
     for (int j = 0; j < 3; j++) {
       gaussResults[i][j][0] = g1->GetParameter(j);
       gaussResults[i][j][1] = g1->GetParError(j);
@@ -51,19 +45,62 @@ void gainFit() {
         paramName = "Sigma";
       }
 
-      cout<<paramName<<": "<<gaussResults[i][j][0]<<" +/- "<<gaussResults[i][j][1]<<endl;
+      //cout<<paramName<<": "<<gaussResults[i][j][0]<<" +/- "<<gaussResults[i][j][1]<<endl;
     }
-    cout<<endl;
+    //cout<<endl;
     g1->SetLineWidth(1);
   }
+
+  double conversion = 1.027*EE(-15);
+  double electron = 1.602*EE(-19);
+  double avgMeanDiff = (gaussResults[(gaussFitNum-1)][1][0]-gaussResults[0][1][0])/(gaussFitNum-1);
+  double gain = conversion*avgMeanDiff/electron;
+
+  unsigned int const size2 = gaussFitNum-3;
+
+  Double_t x2[size2];
+  Double_t y2[size2];
+
+  for(int i = 0; i < size2; i++) {
+    x2[i] = (gaussResults[i+1][1][0]+gaussResults[i][1][0])/2;
+    y2[i] = conversion*(gaussResults[i+1][1][0]-gaussResults[i][1][0])/electron;
+    cout<<to_string(i)<<": "<<x2[i]<<"; "<<y2[i]<<endl;
+  }
+
+  TGraph* gr2;
+  gr2 = new TGraph((size2),x2,y2);
+
+  gr2->Fit("pol1", "Q");
+  TF1 *f = gr2->GetFunction("pol1");
+
+  double b = f->GetParameter(0);
+  double m = f->GetParameter(1);
+
+  double sigb = f->GetParError(0);
+  double sigm = f->GetParError(1);
+
+  cout<<"Correlation factor of gain v channel: "<<gr2->GetCorrelationFactor()<<endl;
+
+
+  cout<<"Gain = "<<gain<<endl;
+
 
   gr->SetLineWidth(0);
   gr->SetMarkerStyle(20);
   gr->SetMarkerSize(0.5);
   gr->SetTitle("Gain Plot");
-  gr->GetXaxis()->SetTitle("Detected");
-  gr->GetYaxis()->SetTitle("Channel");
+  gr->GetXaxis()->SetTitle("Channel");
+  gr->GetYaxis()->SetTitle("Counts");
   gr->Draw("AP");
 
   c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit.png");
+
+  gr2->SetLineWidth(0);
+  gr2->SetMarkerStyle(20);
+  gr2->SetMarkerSize(0.5);
+  gr2->SetTitle("Gain Plot");
+  gr2->GetXaxis()->SetTitle("Channel");
+  gr2->GetYaxis()->SetTitle("Gain");
+  gr2->Draw("AP");
+
 }
