@@ -131,10 +131,12 @@ void gainFit32() {
   TGraph* gainPoisson;
   gainPoisson = new TGraph((sizePoisson),xPoisson,yPoisson);
 
-  //TF1 * f76 = new TF1("f",[](double*x,double*p){return p[0]*TMath::Poisson(x[0],p[1]);},2000,8000,2);
+  //TF1 *funcPoisson = new TF1("poisson",[](double*x,double*p){return p[0]*TMath::Power(p[1],x[0])*TMath::Exp(-p[1])/TMath::Factorial(x[0]);},2000,8000,2);
   TF1 *funcPoisson = new TF1("poisson","gaus",2000,8000);
 
-  gainPoisson->Fit("poisson", "QR+");
+  //funcPoisson->SetParLimits(2,);
+
+  gainPoisson->Fit("poisson", "Q");
 
   //----------------------------------------------------------------------------------------------------//
 
@@ -142,7 +144,7 @@ void gainFit32() {
 
   //-------------------------------Draw plots to canvas and save to files-------------------------------//
 
-  TCanvas *c1 = new TCanvas();
+  //TCanvas *c1 = new TCanvas();
 
   gErrorIgnoreLevel = kWarning;
 
@@ -152,18 +154,18 @@ void gainFit32() {
   channelCountsTGraph->SetTitle("Gain Plot");
   channelCountsTGraph->GetXaxis()->SetTitle("Channel");
   channelCountsTGraph->GetYaxis()->SetTitle("Counts");
-  channelCountsTGraph->Draw("AP");
+  //channelCountsTGraph->Draw("AP");
 
-  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit.png");
+  //c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit32.png");
 
   gainLinearTGraph->SetMarkerStyle(20);
   gainLinearTGraph->SetMarkerSize(0.5);
   gainLinearTGraph->SetTitle("Gain Plot");
   gainLinearTGraph->GetXaxis()->SetTitle("Channel");
   gainLinearTGraph->GetYaxis()->SetTitle("Gain");
-  gainLinearTGraph->Draw("AP");
+  //gainLinearTGraph->Draw("AP");
 
-  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainLinear.png");
+  //c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainLinear32.png");
 
   gainPoisson->SetLineWidth(0);
   gainPoisson->SetMarkerStyle(20);
@@ -172,6 +174,8 @@ void gainFit32() {
   gainPoisson->GetXaxis()->SetTitle("Channel");
   gainPoisson->GetYaxis()->SetTitle("Counts");
   gainPoisson->Draw("AP");
+
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainPoisson32.png");
 
   //----------------------------------------------------------------------------------------------------//
 
