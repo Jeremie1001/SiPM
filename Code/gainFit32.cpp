@@ -68,23 +68,32 @@ void gainFit32() {
 
   double conversion = 1.027*EE(-15);
   double electron = 1.602*EE(-19);
-  double avgMeanDiff = (gaussResults[(gaussFitNum-1)][1][0]-gaussResults[0][1][0])/(gaussFitNum-1);
+
+  int sumDiff = 0;
+  for (size_t i = 0; i < gaussFitNum-1; i++) {
+    sumDiff += (gaussResults[i+1][1][0]-gaussResults[i][1][0]);
+  }
+  double avgMeanDiff = sumDiff/(gaussFitNum-1);
+
   double gain = conversion*avgMeanDiff/electron;
 
   cout<<"Gain = "<<gain<<endl;
 
-  unsigned int const size2 = gaussFitNum-3;
+  unsigned int const sizeGainLinear = gaussFitNum-3;
 
-  Double_t x2[size2];
-  Double_t y2[size2];
+  Double_t xGainLinear[sizeGainLinear];
+  Double_t yGainLinear[sizeGainLinear];
+  Double_t exGainLinear[sizeGainLinear];
+  Double_t eyGainLinear[sizeGainLinear];
 
-  for(int i = 0; i < size2; i++) {
-    x2[i] = (gaussResults[i+1][1][0]+gaussResults[i][1][0])/2;
-    y2[i] = conversion*(gaussResults[i+1][1][0]-gaussResults[i][1][0])/electron;
+  for(int i = 0; i < sizeGainLinear; i++) {
+    xGainLinear[i] = (gaussResults[i+1][1][0]+gaussResults[i][1][0])/2;
+    yGainLinear[i] = conversion*(gaussResults[i+1][1][0]-gaussResults[i][1][0])/electron;
+    eyGainLinear[i] = conversion/electron*pow((pow(gaussResults[i+1][1][1],2)+pow(gaussResults[i][1][1],2)),0.5);
   }
 
-  TGraph* gainLinearTGraph;
-  gainLinearTGraph = new TGraph((size2),x2,y2);
+  TGraphErrors* gainLinearTGraph;
+  gainLinearTGraph = new TGraphErrors(sizeGainLinear,xGainLinear,yGainLinear,0,eyGainLinear);
 
   //----------------------------------------------------------------------------------------------------//
 
@@ -109,20 +118,33 @@ void gainFit32() {
 
   //----------------------------------------Gaussian peaks plot-----------------------------------------//
 
-/*
-  TH2D *hXY;
-  hXY = new TH2D("h1", "Histogram for joint datasets", 50, minX, maxX, 50, minY, maxY);
+  unsigned int const sizePoisson = gaussFitNum;
 
-  for(int j = 0; j < dataArray[0].size(); j++) {
-    hXY->Fill(dataArray[0][j], dataArray[1][j]);
+  Double_t xPoisson[sizePoisson];
+  Double_t yPoisson[sizePoisson];
+
+  for(int i = 0; i < sizePoisson; i++) {
+    xPoisson[i] = gaussResults[i][1][0];
+    yPoisson[i] = gaussResults[i][0][0];
   }
-*/
+
+  TGraph* gainPoisson;
+  gainPoisson = new TGraph((sizePoisson),xPoisson,yPoisson);
+
+  //TF1 * f76 = new TF1("f",[](double*x,double*p){return p[0]*TMath::Poisson(x[0],p[1]);},2000,8000,2);
+  TF1 *funcPoisson = new TF1("poisson","gaus",2000,8000);
+
+  gainPoisson->Fit("poisson", "QR+");
 
   //----------------------------------------------------------------------------------------------------//
+
+
 
   //-------------------------------Draw plots to canvas and save to files-------------------------------//
 
   TCanvas *c1 = new TCanvas();
+
+  gErrorIgnoreLevel = kWarning;
 
   channelCountsTGraph->SetLineWidth(0);
   channelCountsTGraph->SetMarkerStyle(20);
@@ -134,13 +156,22 @@ void gainFit32() {
 
   c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainFit.png");
 
-  gainLinearTGraph->SetLineWidth(0);
   gainLinearTGraph->SetMarkerStyle(20);
   gainLinearTGraph->SetMarkerSize(0.5);
   gainLinearTGraph->SetTitle("Gain Plot");
   gainLinearTGraph->GetXaxis()->SetTitle("Channel");
   gainLinearTGraph->GetYaxis()->SetTitle("Gain");
   gainLinearTGraph->Draw("AP");
+
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainLinear.png");
+
+  gainPoisson->SetLineWidth(0);
+  gainPoisson->SetMarkerStyle(20);
+  gainPoisson->SetMarkerSize(0.5);
+  gainPoisson->SetTitle("Gain Plot");
+  gainPoisson->GetXaxis()->SetTitle("Channel");
+  gainPoisson->GetYaxis()->SetTitle("Counts");
+  gainPoisson->Draw("AP");
 
   //----------------------------------------------------------------------------------------------------//
 

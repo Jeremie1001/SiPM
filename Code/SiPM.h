@@ -14,6 +14,7 @@ using namespace std;
 
 vector< vector<double> > getData(string file, char delim, int start);
 double EE(int exponentPassed);
+Double_t poissonf(Double_t*x,Double_t*par);
 
 //----------------------------------------------------------------------------------------------------//
 
@@ -71,6 +72,13 @@ vector< vector<double> > getData(string file, char delim, int start) {
     }
   }
   return dataSet;
+
+  //----------------------------------------------------------------------------------------------------//
+}
+
+
+Double_t poissonf(Double_t*x,Double_t*par) {
+  return par[0]*TMath::Poisson(x[0],par[1]);
 }
 
 //----------------------------------------------------------------------------------------------------//
