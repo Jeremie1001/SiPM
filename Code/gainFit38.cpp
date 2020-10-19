@@ -120,21 +120,24 @@ void gainFit38() {
 
   unsigned int const sizePoisson = gaussFitNum;
 
-  Double_t xPoisson[sizePoisson];
-  Double_t yPoisson[sizePoisson];
+  TH1D *gainPoisson;
+  gainPoisson = new TH1D("h1", "Histogram for joint datasets", sizePoisson, 0, sizePoisson);
+
+  TF1 *g = new TF1("g","gaus",2000,20000);
+
 
   for(int i = 0; i < sizePoisson; i++) {
-    xPoisson[i] = gaussResults[i][1][0];
-    yPoisson[i] = gaussResults[i][0][0];
+    g->SetParameters(gaussResults[i][0][0],gaussResults[i][1][0],gaussResults[i][2][0]);
+    gainPoisson->SetBinContent(i+1,g->Integral(x[gaussLimits[i][0]],x[gaussLimits[i][1]]));
   }
 
-  TGraph* gainPoisson;
-  gainPoisson = new TGraph((sizePoisson),xPoisson,yPoisson);
+  gainPoisson->Scale(1/(gainPoisson->Integral()));
 
-  //TF1 *funcPoisson = new TF1("poisson",[](double*x,double*p){return p[0]*x[0]+p[1];},2000,8000,2);
-  TF1 *funcPoisson = new TF1("poisson","gaus",2000,8000);
+  TF1 *funcPoisson = new TF1("poisson",[](double*x,double*p){return TMath::Poisson(x[0],p[0]);},0,20,1);
+  TF1 *g2 = new TF1("g2","gaus",0,25);
 
-  gainPoisson->Fit("poisson", "Q");
+  gainPoisson->Fit("g2");
+
 
   //----------------------------------------------------------------------------------------------------//
 
@@ -165,13 +168,12 @@ void gainFit38() {
 
   c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainLinear38.png");
 
-  gainPoisson->SetLineWidth(0);
   gainPoisson->SetMarkerStyle(20);
-  gainPoisson->SetMarkerSize(0.5);
-  gainPoisson->SetTitle("Gain Plot");
-  gainPoisson->GetXaxis()->SetTitle("Channel");
+  gainPoisson->SetMarkerSize(1);
+  gainPoisson->SetTitle("Poisson Plot");
+  gainPoisson->GetXaxis()->SetTitle("N [Peak Number]");
   gainPoisson->GetYaxis()->SetTitle("Counts");
-  gainPoisson->Draw("AP");
+  gainPoisson->Draw();
 
   c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/gainPoisson38.png");
 
