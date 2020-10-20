@@ -119,10 +119,11 @@ void crystal() {
 
   //----------------------------------------------Analysis----------------------------------------------//
 
-  double cesiumChannel = cesiumFit->GetParameter(1);
-  double cesiumEnergy = (cesiumChannel-calibrationResults[0][0])/calibrationResults[1][0];
+  double cesiumChannel[2] = {cesiumFit->GetParameter(1), cesiumFit->GetParameter(2)};
+  double cesiumEnergy = (cesiumChannel[0]-calibrationResults[0][0])/calibrationResults[1][0];
+  double cesiumEnergyError = pow(pow((cesiumChannel[1]/calibrationResults[1][0]),2) + pow((calibrationResults[0][1]/calibrationResults[1][0]),2) + pow((calibrationResults[1][1]*(cesiumChannel[0]-calibrationResults[0][0])/pow(calibrationResults[1][0],2)),2),0.5);
 
-  cout<<"Cesium Energy: "<<cesiumEnergy<<endl;
+  cout<<"Cesium Energy: "<<cesiumEnergy<<" +/- "<<cesiumEnergyError<<endl;
 
   //----------------------------------------------------------------------------------------------------//
 
@@ -140,7 +141,7 @@ void crystal() {
   graphBgd->GetYaxis()->SetTitle("Counts");
   graphBgd->Draw("AP");
 
-  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/bgdSpectrum.png");
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/crystalBgdSpectrum.png");
 
   graphCs->SetLineWidth(0);
   graphCs->SetMarkerStyle(20);
@@ -150,7 +151,7 @@ void crystal() {
   graphCs->GetYaxis()->SetTitle("Counts");
   graphCs->Draw("AP");
 
-  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/cesiumSpectrum.png");
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/crystalCesiumSpectrum.png");
 
   graphNa->SetLineWidth(0);
   graphNa->SetMarkerStyle(20);
@@ -160,7 +161,7 @@ void crystal() {
   graphNa->GetYaxis()->SetTitle("Counts");
   graphNa->Draw("AP");
 
-  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/sodiumSpectrum.png");
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/crystalSodiumSpectrum.png");
 
   graphCalibration->SetMarkerStyle(20);
   graphCalibration->SetMarkerSize(0.5);
@@ -169,7 +170,7 @@ void crystal() {
   graphCalibration->GetYaxis()->SetTitle("Channel");
   graphCalibration->Draw("AP");
 
-  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/calibrationFit.png");
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/crytalCalibrationFit.png");
 
   //----------------------------------------------------------------------------------------------------//
 

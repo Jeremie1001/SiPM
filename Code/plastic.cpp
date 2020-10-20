@@ -62,8 +62,8 @@ void plastic() {
   TGraph* graphCs;
   graphCs = new TGraph(dataCs.size(),xCs,yCs);
 
-  TF1 *cesiumFit = new TF1("cesiumFit","gaus",7700,12000);
-  graphCs->Fit("cesiumFit", "QR+");
+  TF1 *cesiumFit = new TF1("cesiumFit","gaus",0,3500);
+  //graphCs->Fit("cesiumFit", "QR+");
 
   //----------------------------------------------------------------------------------------------------//
 
@@ -85,10 +85,10 @@ void plastic() {
   graphNa = new TGraph(dataNa.size(),xNa,yNa);
 
   TF1 *sodiumFit1 = new TF1("sodiumFit1","gaus",5800,9000);
-  graphNa->Fit("sodiumFit1", "QR+");
+  //graphNa->Fit("sodiumFit1", "QR+");
 
   TF1 *sodiumFit2 = new TF1("sodiumFit2","gaus",15000,24000);
-  graphNa->Fit("sodiumFit2", "QR+");
+  //graphNa->Fit("sodiumFit2", "QR+");
 
   //----------------------------------------------------------------------------------------------------//
 
@@ -140,6 +140,8 @@ void plastic() {
   graphBgd->GetYaxis()->SetTitle("Counts");
   graphBgd->Draw("AP");
 
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/plasticBgdSpectrum.png");
+
   graphCs->SetLineWidth(0);
   graphCs->SetMarkerStyle(20);
   graphCs->SetMarkerSize(0.5);
@@ -147,6 +149,8 @@ void plastic() {
   graphCs->GetXaxis()->SetTitle("Channel");
   graphCs->GetYaxis()->SetTitle("Counts");
   graphCs->Draw("AP");
+
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/plasticCesiumSpectrum.png");
 
   graphNa->SetLineWidth(0);
   graphNa->SetMarkerStyle(20);
@@ -156,12 +160,16 @@ void plastic() {
   graphNa->GetYaxis()->SetTitle("Counts");
   graphNa->Draw("AP");
 
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/plasticSodiumSpectrum.png");
+
   graphCalibration->SetMarkerStyle(20);
   graphCalibration->SetMarkerSize(0.5);
   graphCalibration->SetTitle("Calibration");
   graphCalibration->GetXaxis()->SetTitle("Channel");
   graphCalibration->GetYaxis()->SetTitle("Counts");
   graphCalibration->Draw("AP");
+
+  c1->SaveAs("/home/jeremie1001/Documents/School/Uni/Course/4th_Year/PHYS4007/SiPM/Report/Figures/plasticCalibrationFit.png");
 
   //----------------------------------------------------------------------------------------------------//
 
