@@ -69,14 +69,18 @@ void gainFit38() {
   double conversion = 1.027*EE(-15);
   double electron = 1.602*EE(-19);
 
-  int sumDiff = 0;
+  double sumResolution = 0;
+  double sumDiff = 0;
   for (size_t i = 0; i < gaussFitNum-1; i++) {
     sumDiff += (gaussResults[i+1][1][0]-gaussResults[i][1][0]);
+    sumResolution += (gaussResults[i+1][1][0]-gaussResults[i][1][0])/pow(TMath::Abs(pow((gaussResults[i+1][2][0]),2)-pow((gaussResults[i][2][0]),2)),0.5);
   }
+  double avgResolution =  sumResolution/(gaussFitNum-1);
   double avgMeanDiff = sumDiff/(gaussFitNum-1);
 
   double gain = conversion*avgMeanDiff/electron;
 
+  cout<<"Resolution = "<<avgResolution<<endl;
   cout<<"Gain = "<<gain<<endl;
 
   unsigned int const sizeGainLinear = gaussFitNum-2;
